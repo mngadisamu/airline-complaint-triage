@@ -1,0 +1,6 @@
+__pycache__/
+.pytest_cache/
+.streamlit/secrets.toml
+Tweets.csv
+*.pyc
+data/complaints.db

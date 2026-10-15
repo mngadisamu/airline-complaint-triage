@@ -1,0 +1,49 @@
+{
+  "n_train": 7264,
+  "n_test": 1816,
+  "accuracy": 0.6266519823788547,
+  "baseline": 0.31718061674008813,
+  "f1": {
+    "Bad Flight": 0.48,
+    "Can't Tell": 0.46,
+    "Cancelled Flight": 0.75,
+    "Customer Service Issue": 0.68,
+    "Damaged Luggage": 0.12,
+    "Flight Attendant Complaints": 0.45,
+    "Flight Booking Problems": 0.47,
+    "Late Flight": 0.74,
+    "Lost Luggage": 0.78,
+    "longlines": 0.28
+  },
+  "counts": {
+    "Customer Service Issue": 2882,
+    "Late Flight": 1651,
+    "Can't Tell": 1174,
+    "Cancelled Flight": 831,
+    "Lost Luggage": 719,
+    "Bad Flight": 575,
+    "Flight Booking Problems": 523,
+    "Flight Attendant Complaints": 475,
+    "longlines": 177,
+    "Damaged Luggage": 73
+  },
+  "threshold": 0.5,
+  "thresholds": {
+    "0.0": {
+      "coverage": 1.0,
+      "accuracy": 0.6266519823788547
+    },
+    "0.5": {
+      "coverage": 0.5991189427312775,
+      "accuracy": 0.7858455882352942
+    },
+    "0.6": {
+      "coverage": 0.4917400881057269,
+      "accuracy": 0.8309070548712206
+    },
+    "0.7": {
+      "coverage": 0.3893171806167401,
+      "accuracy": 0.8628005657708628
+    }
+  }
+}

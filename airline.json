@@ -1,0 +1,60 @@
+{
+  "_help": "Everything specific to one airline lives here. To use another airline, edit this file. The classifier itself is not airline-specific.",
+  "airline_name": "Example Air",
+  "fictional": true,
+  "sign_off": "Example Air Customer Care",
+  "confidence_threshold": 0.5,
+  "high_reasons": [
+    "Cancelled Flight",
+    "Lost Luggage"
+  ],
+  "medium_reasons": [
+    "Damaged Luggage",
+    "Flight Booking Problems",
+    "Late Flight"
+  ],
+  "urgent_words": [
+    "stranded",
+    "stuck",
+    "missed connection",
+    "missed my connection",
+    "missed my flight",
+    "overnight",
+    "no one",
+    "nobody",
+    "emergency",
+    "medical"
+  ],
+  "teams": {
+    "Cancelled Flight": "Operations",
+    "Late Flight": "Operations",
+    "Lost Luggage": "Baggage Services",
+    "Damaged Luggage": "Baggage Services",
+    "Flight Booking Problems": "Reservations"
+  },
+  "default_team": "Customer Relations",
+  "manual_team": "Customer Relations (manual)",
+  "blocked_words": [
+    "refund",
+    "compensation",
+    "compensate",
+    "guarantee",
+    "reimburse",
+    "voucher",
+    "rebook",
+    "free ticket",
+    "we promise"
+  ],
+  "reply_templates": {
+    "Cancelled Flight": "Hello, we're sorry your flight was cancelled and for the disruption this has caused. We've passed your message to our {team} team so they can look at your situation. Please send us your booking reference by direct message so they can find you quickly.",
+    "Late Flight": "Hello, we're sorry your flight was delayed. We've passed your message to our {team} team. Please send us your booking reference by direct message so they can look into it.",
+    "Lost Luggage": "Hello, we're sorry your bag has not arrived. We've passed your message to our {team} team. Please send us your booking reference and bag tag number by direct message so they can trace it.",
+    "Damaged Luggage": "Hello, we're sorry your bag was damaged. We've passed your message to our {team} team. Please send us your booking reference and a photo of the damage by direct message.",
+    "Flight Booking Problems": "Hello, we're sorry you had trouble with your booking. We've passed your message to our {team} team. Please send us your booking reference by direct message so they can look at it.",
+    "Customer Service Issue": "Hello, we're sorry about your experience with our service. We've passed your message to our {team} team. Please send us your booking reference by direct message so they can follow up.",
+    "Flight Attendant Complaints": "Hello, we're sorry about your experience on board. We've passed your message to our {team} team. Please send us your flight number and date by direct message so they can follow up.",
+    "Bad Flight": "Hello, we're sorry your flight was not what you expected. We've passed your message to our {team} team. Please send us your flight number and date by direct message.",
+    "longlines": "Hello, we're sorry about the long wait. We've passed your message to our {team} team. Please tell us the airport and time by direct message.",
+    "Can't Tell": "Hello, we're sorry to hear about your experience. We've passed your message to our {team} team. Please tell us more about what happened and your booking reference by direct message."
+  }
+}
