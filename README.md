@@ -4,6 +4,14 @@ Week 4 project, CAPACITI x Clickatell AI Bootcamp. A prototype that sorts airlin
 
 Tower is the tool. Example Air is the fictional airline it is configured for. Nothing is sent to customers.
 
+**Live app:** https://airline-complaint-triage-h5gvccmt8vbmwyfhmpc2n3.streamlit.app/ (sign in with a demo account below)
+
+**Results:** the reason classifier is 62.7% accurate on 1,816 unseen tweets, against 31.7% for always guessing the most common reason. It is 79% accurate when at least 50% sure, and lower-confidence complaints are flagged for a manual read. AI drafts are checked by guardrails, and a person approves every reply.
+
+| Agent view with AI draft | Insights | Customer status page |
+| --- | --- | --- |
+| ![Agent view](docs/screenshots/3_detail.png) | ![Insights](docs/screenshots/4_insights.png) | ![Status page](docs/screenshots/5_status.png) |
+
 ## Who uses Tower
 
 Tower serves several airlines from one app. There are four roles:
@@ -94,7 +102,7 @@ Reply templates, urgency rules, team names, blocked words and the confidence thr
 
 - Data is from 2015, US airlines, English only.
 - The reason is wrong about 4 times in 10 overall.
-- The sign-in is a prototype: two demo accounts, passwords hashed, no reset or multi-factor.
+- The sign-in is a prototype: four demo accounts with a published password, hashed passwords, lockout after repeated failures, a one-hour idle sign-out and admin-issued password resets, but no multi-factor sign-in.
 - Complaints are stored in a SQLite file (`data/complaints.db`). They survive restarts on a laptop, but the file is lost when the app is rebuilt on Streamlit Community Cloud.
 - The social media feed is simulated with replayed tweets. Connecting X or Facebook is not built.
 - Replies reach customers only through the status page. No email, SMS or social post is sent.
@@ -113,7 +121,7 @@ streamlit run app.py
 python -m pytest tests
 ```
 
-To retrain: `python train.py path/to/Tweets.csv` (Kaggle "Twitter US Airline Sentiment"; the full file is not in this repo). The sample tweets in `data/replay_sample.csv` come from that public dataset; check its licence on Kaggle before publishing the repository, and note that the tests need a recent Streamlit (they were run on 1.65).
+To retrain: `python train.py path/to/Tweets.csv` (Kaggle "Twitter US Airline Sentiment"; the full file is not in this repo). The sample tweets in `data/replay_sample.csv` come from that public dataset; check its licence on the Kaggle dataset page before reusing it, and note that the tests need a recent Streamlit (they were run on 1.65).
 
 ## Activity log and who-did-what
 Airline admins and team leads see an **Activity log** page for their airline, and the platform admin sees a Platform log across all airlines. It lists every sign-in, failed sign-in, AI draft, escalation (with the agent's reason), return (with the lead's note) and approval, with who did it and when (UTC). It can be filtered and downloaded as CSV. Each complaint also has a "History of this complaint" panel. The log never records complaint text, passwords or API keys. See `docs/journeys.md` for the table of who sees and does what at each stage, and the list of known limitations.
