@@ -89,6 +89,12 @@ def airline(airline_id):
         return _airline(c.execute("SELECT * FROM airlines WHERE id=?", (airline_id,)).fetchone())
 
 
+def update_airline(airline_id, name, sign_off):
+    """Rename an airline. The slug is left alone on purpose, so every link already handed out keeps working."""
+    with _conn() as c:
+        c.execute("UPDATE airlines SET name=?, sign_off=? WHERE id=?", (" ".join((name or "").split()), sign_off, airline_id))
+
+
 def set_airline_active(airline_id, active):
     with _conn() as c:
         c.execute("UPDATE airlines SET active=? WHERE id=?", (int(active), airline_id))
@@ -158,6 +164,11 @@ def clear_failed_logins(user_id):
 def set_role(user_id, role):
     with _conn() as c:
         c.execute("UPDATE users SET role=? WHERE id=?", (role, user_id))
+
+
+def set_user_name(user_id, name):
+    with _conn() as c:
+        c.execute("UPDATE users SET name=? WHERE id=?", (" ".join((name or "").split()), user_id))
 
 
 def set_email(user_id, email):

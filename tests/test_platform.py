@@ -349,3 +349,37 @@ def test_user_cap_per_airline():
     field(org, "Name").set_value("One Too Many"); field(org, "Email").set_value("t@example.test"); field(org, "Username").set_value("too.many")
     btn(org, "Create account").click().run()
     assert any("already has" in e.value for e in org.error) and not storage.user_by_username("too.many")
+
+
+def test_platform_admin_can_edit_airline_name_admin_name_and_email():
+    at = add_airline("Kestrel Air", "Thabo D.", "thabo.k")
+    al = storage.airline_by_slug("kestrel-air")
+    u = storage.user_by_username("thabo.k")
+    nav(at, "Airlines")
+    # airline: new name and sign-off; the link (slug) stays the same
+    at.text_input(key=f"an{al['id']}").set_value("Kestrel Airways")
+    at.text_input(key=f"as{al['id']}").set_value("Kestrel Airways Care")
+    [b for b in at.button if b.key == f"asv{al['id']}"][0].click().run()
+    al2 = storage.airline(al["id"])
+    assert al2["name"] == "Kestrel Airways" and al2["sign_off"] == "Kestrel Airways Care" and al2["slug"] == "kestrel-air"
+    # a name already in use, and markup, are refused
+    at.text_input(key=f"an{al['id']}").set_value("Example Air")
+    [b for b in at.button if b.key == f"asv{al['id']}"][0].click().run()
+    assert storage.airline(al["id"])["name"] == "Kestrel Airways"
+    at.text_input(key=f"an{al['id']}").set_value("<b>Bad</b>")
+    [b for b in at.button if b.key == f"asv{al['id']}"][0].click().run()
+    assert storage.airline(al["id"])["name"] == "Kestrel Airways"
+    # the airline admin's name and email, from the Airlines page and from All users
+    at.text_input(key=f"anm{u['id']}").set_value("Thabo Dlamini")
+    at.text_input(key=f"aem{u['id']}").set_value("thabo.dlamini@example.test")
+    [b for b in at.button if b.key == f"aeb{u['id']}"][0].click().run()
+    v = storage.user_by_id(u["id"])
+    assert v["name"] == "Thabo Dlamini" and v["email"] == "thabo.dlamini@example.test" and v["username"] == "thabo.k"
+    nav(at, "All users")
+    at.text_input(key=f"pem{u['id']}").set_value("not-an-email")
+    [b for b in at.button if b.key == f"peb{u['id']}"][0].click().run()
+    assert storage.user_by_id(u["id"])["email"] == "thabo.dlamini@example.test"
+    actions = {e["action"] for e in storage.events(None)}
+    assert {"airline_edited", "name_changed", "email_changed"} <= actions
+    # the shared demo airline keeps its name
+    assert not [t for t in at.text_input if t.key == f"an{storage.airline_by_slug('example-air')['id']}"]
