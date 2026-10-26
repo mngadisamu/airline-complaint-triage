@@ -103,12 +103,36 @@ def _new_user(airline_id, name, username, role, email, org=None, platform=False)
     return None
 
 
+def _details_form(u, key):
+    """Edit one person's name and email. Their username and sign-in stay the same. Returns True if something changed."""
+    name = st.text_input("Name", value=u["name"], key=f"{key}nm{u['id']}")
+    mail = st.text_input("Email", value=u.get("email") or "", key=f"{key}em{u['id']}")
+    if not st.button("Save name and email", key=f"{key}eb{u['id']}"):
+        return False
+    new_name, new_mail = clean_name(name), mail.strip()
+    if not new_name:
+        st.error("Enter a name using letters, numbers, spaces and . ' & - only.")
+    elif new_mail != (u.get("email") or "") and not valid_email(new_mail):
+        st.error("Enter a valid email address.")
+    elif new_name == u["name"] and new_mail == (u.get("email") or ""):
+        st.info("Nothing to save: no changes were made.")
+    else:
+        if new_name != u["name"]:
+            storage.set_user_name(u["id"], new_name)
+            audit("name_changed", "", f"{u['name']} to {new_name} ({u['username']})", airline_id=u["airline_id"])
+        if new_mail != (u.get("email") or ""):
+            storage.set_email(u["id"], new_mail)
+            audit("email_changed", "", f"{new_name} ({u['username']})", airline_id=u["airline_id"])
+        return True
+    return False
+
+
 def _change_role(u, key):
     """Change a person's role or email. A role change takes effect on their next click."""
     me = ss.user
     if u["id"] == me["id"] or u["role"] not in auth.STAFF_ROLES or (u["created_by"] == "setup" and me["role"] != auth.PLATFORM_ADMIN):
         return False
-    with st.expander("Change role or email"):
+    with st.expander("Change name, role or email"):
         new = st.selectbox("Role", auth.STAFF_ROLES, index=auth.STAFF_ROLES.index(u["role"]), key=f"{key}rs{u['id']}")
         if st.button("Save role", key=f"{key}rb{u['id']}") and new != u["role"] and new in auth.STAFF_ROLES:
             others = [x for x in storage.users(u["airline_id"]) if x["active"] and x["role"] == auth.ORG_ADMIN and x["id"] != u["id"]]
@@ -118,14 +142,8 @@ def _change_role(u, key):
                 storage.set_role(u["id"], new)
                 audit("role_changed", "", f"{u['name']} ({u['username']}): {u['role']} to {new}", airline_id=u["airline_id"])
                 return True
-        mail = st.text_input("Email", value=u.get("email") or "", key=f"{key}em{u['id']}")
-        if st.button("Save email", key=f"{key}eb{u['id']}") and mail.strip() != (u.get("email") or ""):
-            if not valid_email(mail):
-                st.error("Enter a valid email address.")
-            else:
-                storage.set_email(u["id"], mail)
-                audit("email_changed", "", f"{u['name']} ({u['username']})", airline_id=u["airline_id"])
-                return True
+        if _details_form(u, key):
+            return True
     return False
 
 
@@ -438,6 +456,32 @@ def page_airlines():
                     storage.set_airline_active(al["id"], True)
                     audit("airline_reactivated", "", al["name"], airline_id=al["id"])
                     st.rerun()
+            with st.expander("Edit airline name and sign-off"):
+                if al["demo"]:
+                    st.caption("The shared demo airline keeps its name so the demo stays the same for everyone.")
+                else:
+                    st.caption("Links keep working after a rename. Replies already sent keep the sign-off they were sent with.")
+                    n1 = st.text_input("Airline name", value=al["name"], key=f"an{al['id']}")
+                    n2 = st.text_input("Sign-off on replies", value=al["sign_off"], key=f"as{al['id']}")
+                    if st.button("Save airline", key=f"asv{al['id']}"):
+                        nm, so = clean_name(n1), clean_name(n2)
+                        other = storage.airline_by_name(n1)
+                        if not nm:
+                            st.error("Enter the airline's name using letters, numbers, spaces and . ' & - only.")
+                        elif not so or len(so) > 60:
+                            st.error("The sign-off can be up to 60 characters, letters, numbers, spaces and . ' & - only.")
+                        elif other and other["id"] != al["id"]:
+                            st.error("An airline with that name already exists.")
+                        elif nm == al["name"] and so == al["sign_off"]:
+                            st.info("Nothing to save: no changes were made.")
+                        else:
+                            storage.update_airline(al["id"], nm, so)
+                            audit("airline_edited", "", f"{al['name']} to {nm}" if nm != al["name"] else nm, airline_id=al["id"])
+                            st.rerun()
+            for u in (x for x in users if x["role"] == auth.ORG_ADMIN):
+                with st.expander(f"Edit administrator: {u['name']} ({u['username']})"):
+                    if _details_form(u, "a"):
+                        st.rerun()
             with st.expander("Links and administrators"):
                 for label, url in airline_links(al).items():
                     st.write(label)
@@ -482,6 +526,9 @@ def page_users():
             c.write(_state(u))
             with d:
                 if _user_actions(u, "p"):
+                    st.rerun()
+            with st.expander("Edit name and email"):
+                if _details_form(u, "p"):
                     st.rerun()
 
 

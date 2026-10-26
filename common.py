@@ -11,7 +11,7 @@ ACTION_LABELS = {
     "signed_in": "Signed in", "signed_out": "Signed out", "sign_in_failed": "Sign-in failed",
     "user_added": "User added", "user_deactivated": "User deactivated", "user_reactivated": "User reactivated",
     "password_reset": "Password reset", "password_changed": "Password changed",
-    "role_changed": "Role changed", "follow_up": "Customer follow-up", "email_changed": "Email changed", "credentials_emailed": "Sign-in details emailed", "airline_added": "Airline added", "airline_deactivated": "Airline deactivated", "airline_reactivated": "Airline reactivated",
+    "role_changed": "Role changed", "follow_up": "Customer follow-up", "email_changed": "Email changed", "name_changed": "Name changed", "airline_edited": "Airline details changed", "credentials_emailed": "Sign-in details emailed", "airline_added": "Airline added", "airline_deactivated": "Airline deactivated", "airline_reactivated": "Airline reactivated",
 }
 
 
