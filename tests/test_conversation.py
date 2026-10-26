@@ -192,3 +192,12 @@ def test_mailer_talks_smtp_without_leaking_the_password(monkeypatch):
     monkeypatch.setattr(smtplib, "SMTP", Boom)
     ok, why = mailer.send("a@example.test", "Hello", "Body")
     assert not ok and why == "SMTPAuthenticationError" and "secret-app-password" not in why
+
+
+def test_sign_in_email_is_branded_html_with_a_plain_text_fallback():
+    subject, body, html = mailer.welcome("Muhamad <b>M</b>", "Qatar Airline", "Airline admin", "muhamad.m", "Temp-Pass-123", "https://x.test/?airline=qatar-airline")
+    assert "Temp-Pass-123" in body and "Temp-Pass-123" in html and "Qatar Airline" in html
+    assert "<b>M</b>" not in html and "&lt;b&gt;M&lt;/b&gt;" in html  # names are escaped
+    assert 'href="https://x.test/?airline=qatar-airline"' in html and "#0F1A2B" in html
+    _, _, h2 = mailer.reset_notice("A", "Air", "a.b", "Pw-1", "https://x.test")
+    assert "reset" in h2.lower()

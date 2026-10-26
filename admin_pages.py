@@ -68,8 +68,8 @@ def _issue(user, temp, org, title, reset=False):
     airline = org["name"] if org else "Tower"
     f = mailer.reset_notice if reset else mailer.welcome
     args = (user["name"], airline, user["username"], temp, link) if reset else (user["name"], airline, user["role"], user["username"], temp, link)
-    subject, body = f(*args)
-    ok, why = mailer.send(user["email"], subject, body) if (user.get("email") and _may_email(org)) else (False, "")
+    subject, body, html = f(*args)
+    ok, why = mailer.send(user["email"], subject, body, html) if (user.get("email") and _may_email(org)) else (False, "")
     if ok:
         audit("credentials_emailed", "", f"{user['name']} ({user['username']})", airline_id=user["airline_id"])
     ss.reveal = {"title": title, "username": user["username"], "password": None if ok else temp, "email": user.get("email"), "emailed": ok, "error": why,
