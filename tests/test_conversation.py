@@ -201,3 +201,23 @@ def test_sign_in_email_is_branded_html_with_a_plain_text_fallback():
     assert 'href="https://x.test/?airline=qatar-airline"' in html and "#0F1A2B" in html
     _, _, h2 = mailer.reset_notice("A", "Air", "a.b", "Pw-1", "https://x.test")
     assert "reset" in h2.lower()
+
+
+def test_email_carries_its_header_picture_inside_the_message(monkeypatch):
+    import smtplib
+    sent = []
+
+    class Fake:
+        def __init__(self, *a, **k): pass
+        def __enter__(self): return self
+        def __exit__(self, *a): pass
+        def starttls(self, **k): pass
+        def login(self, *a): pass
+        def send_message(self, m): sent.append(m)
+    monkeypatch.setattr(smtplib, "SMTP", Fake)
+    monkeypatch.setattr(mailer, "setting", lambda n, d=None: {"SMTP_HOST": "h", "SMTP_FROM": "Tower <t@example.test>"}.get(n, d))
+    s, b, h = mailer.welcome("A", "Air", "Support agent", "a.b", "Pw-1", "https://x.test")
+    assert mailer.send("a@example.test", s, b, h) == (True, "")
+    kinds = [(p.get_content_type(), p.get("Content-ID")) for p in sent[0].walk()]
+    assert ("image/png", "<towerheader>") in kinds and any(k == "text/plain" for k, _ in kinds) and any(k == "text/html" for k, _ in kinds)
+    assert "&#9992;" not in h  # no emoji-style symbols
