@@ -134,7 +134,7 @@ def test_airline_log_never_shows_platform_admin_actions_but_platform_log_does():
 def test_credentials_are_emailed_when_email_is_set_up(monkeypatch):
     sent = []
     monkeypatch.setattr(mailer, "configured", lambda: True)
-    monkeypatch.setattr(mailer, "send", lambda to, subject, body: sent.append((to, subject, body)) or (True, ""))
+    monkeypatch.setattr(mailer, "send", lambda to, subject, body, html=None: sent.append((to, subject, body)) or (True, ""))
     at = add_airline("Mail Test Air", "Mia M.", "mia.m")
     assert len(sent) == 1
     to, subject, body = sent[0]
