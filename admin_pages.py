@@ -88,6 +88,8 @@ def _new_user(airline_id, name, username, role, email, org=None, platform=False)
         return "Enter the person's name using letters, numbers, spaces and . ' - only."
     if not valid_email(email):
         return "Enter a valid email address. The sign-in details are sent there."
+    if storage.user_by_email(email):
+        return "Someone already uses that email address. Every person needs their own."
     if not platform and sum(1 for x in storage.users(airline_id) if x["active"]) >= MAX_USERS:
         return f"This airline already has {MAX_USERS} active users. Deactivate someone first."
     if not platform and storage.count_events(airline_id, "user_added", time.time() - 3600) >= MAX_NEW_PER_HOUR:
@@ -114,6 +116,8 @@ def _details_form(u, key):
         st.error("Enter a name using letters, numbers, spaces and . ' & - only.")
     elif new_mail != (u.get("email") or "") and not valid_email(new_mail):
         st.error("Enter a valid email address.")
+    elif new_mail.lower() != (u.get("email") or "").lower() and storage.user_by_email(new_mail):
+        st.error("Someone already uses that email address. Every person needs their own.")
     elif new_name == u["name"] and new_mail == (u.get("email") or ""):
         st.info("Nothing to save: no changes were made.")
     else:
@@ -425,6 +429,8 @@ def page_airlines():
                 st.error("That username is already taken. Choose another.")
             elif not valid_email(admin_email):
                 st.error("Enter a valid email address for the administrator. The sign-in details are sent there.")
+            elif storage.user_by_email(admin_email):
+                st.error("Someone already uses that email address. Every person needs their own.")
             elif not USERNAME.match(admin_user.strip().lower()) or not clean_name(admin_name):
                 st.error("Enter the administrator's name and a username (3 to 30 characters: lowercase letters, numbers, dots, dashes or underscores).")
             else:

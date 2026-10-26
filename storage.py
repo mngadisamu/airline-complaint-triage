@@ -124,6 +124,15 @@ def user_by_username(username):
         return _user(c.execute("SELECT * FROM users WHERE username=?", ((username or "").strip().lower(),)).fetchone())
 
 
+def user_by_email(email):
+    """Anyone on the platform with this email (case does not matter), or None. Blank emails never match."""
+    e = (email or "").strip().lower()
+    if not e:
+        return None
+    with _conn() as c:
+        return _user(c.execute("SELECT * FROM users WHERE lower(trim(email))=? ORDER BY id LIMIT 1", (e,)).fetchone())
+
+
 def user_by_id(user_id):
     with _conn() as c:
         return _user(c.execute("SELECT * FROM users WHERE id=?", (user_id,)).fetchone())
