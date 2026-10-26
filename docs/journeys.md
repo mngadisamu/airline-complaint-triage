@@ -54,7 +54,7 @@ Every action in the right-hand column is written to the activity log (who, what,
 | A customer who loses the reference and the link cannot get back to the complaint. | No email or phone on the form | Optional email on the form, and a "send me my reference" step |
 | English only. | The model was trained on English tweets | Language detection and routing to a person |
 | A username is unique across all airlines, so an airline admin can learn that a username exists elsewhere when it is refused. | Sign-in is by username | Usernames scoped to each airline, or sign-in by email |
-| An airline's name and sign-off cannot be edited after it is created. | Scope | An edit control for the platform admin |
+| A person's username cannot be changed after the account is created (name and email can). | Sign-in is by username | A rename flow that signs the person out and reissues sign-in details |
 | A determined attacker can fill an airline's public form quota (30 per 10 minutes) and block real customers. | No captcha in a prototype | Captcha or sign-in-by-email for customers |
 | No retention or deletion of complaint data. | Scope | A retention period and a delete-on-request step (POPIA) |
 | If every platform admin loses their password, recovery needs `python reset_admin.py <username>` on the machine that holds the database. | No email service | Email-based reset |

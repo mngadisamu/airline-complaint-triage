@@ -59,7 +59,7 @@ SMTP_FROM = "Tower <your.address@gmail.com>"
 APP_URL = "https://your-app.streamlit.app"
 ```
 
-For Gmail, turn on 2-step verification and create an app password. `APP_URL` is the address printed in the emailed links. Without these settings nothing is emailed: the admin is shown the details once, with a button that opens a ready-made email. When an email is sent, the password is not shown on screen.
+For Gmail, turn on 2-step verification and create an app password. `APP_URL` is the address printed in the emailed links. Without these settings nothing is emailed: the admin is shown the details once, with a button that opens a ready-made email. When an email is sent, the password is not shown on screen. The email is a branded HTML message (dark banner, details card, sign-in button) with a plain-text version as a fallback. Each email address can belong to only one person on the platform, so adding or editing a person with an address already in use is refused.
 
 ## What each role sees
 
@@ -105,7 +105,7 @@ Reply templates, urgency rules, team names, blocked words and the confidence thr
 - The sign-in is a prototype: four demo accounts with a published password, hashed passwords, lockout after repeated failures, a one-hour idle sign-out and admin-issued password resets, but no multi-factor sign-in.
 - Complaints are stored in a SQLite file (`data/complaints.db`). They survive restarts on a laptop, but the file is lost when the app is rebuilt on Streamlit Community Cloud.
 - The social media feed is simulated with replayed tweets. Connecting X or Facebook is not built.
-- Replies reach customers only through the status page. No email, SMS or social post is sent.
+- Replies reach customers only through the status page. No email, SMS or social post is sent to customers (email is used only for staff sign-in details).
 
 ## Documentation
 - `docs/journeys.md`: who sees and does what at every stage, and the known limitations
