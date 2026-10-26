@@ -383,3 +383,32 @@ def test_platform_admin_can_edit_airline_name_admin_name_and_email():
     assert {"airline_edited", "name_changed", "email_changed"} <= actions
     # the shared demo airline keeps its name
     assert not [t for t in at.text_input if t.key == f"an{storage.airline_by_slug('example-air')['id']}"]
+
+
+def test_an_email_address_can_belong_to_only_one_person():
+    at = add_airline("Osprey Air", "Nomsa D.", "nomsa.o")
+    first = storage.user_by_username("nomsa.o")
+    assert first["email"] == "nomsa.o@example.test"
+    # a second airline cannot be set up with the same administrator email, and no half-made airline is left behind
+    nav(at, "Airlines")
+    field(at, "Airline name").set_value("Falcon Air")
+    field(at, "Their name").set_value("Someone Else")
+    field(at, "Their email").set_value("NOMSA.O@example.test")
+    field(at, "Their username").set_value("someone.f")
+    btn(at, "Add airline").click().run()
+    assert any("already uses that email" in e.value for e in at.error)
+    assert not storage.airline_by_slug("falcon-air") and not storage.user_by_username("someone.f")
+    # editing a person to another person's email is refused, in any letter case
+    other = storage.add_user(storage.airline_by_slug("example-air")["id"], "dup.test", "Dup Test", auth.AGENT, auth.hash_password("Passw0rd-long-1"),
+                             must_change=False, created_by="test", email="dup.test@example.test")
+    nav(at, "All users")
+    at.text_input(key=f"pem{other['id']}").set_value("Nomsa.O@example.test")
+    [b for b in at.button if b.key == f"peb{other['id']}"][0].click().run()
+    assert any("already uses that email" in e.value for e in at.error)
+    assert storage.user_by_id(other["id"])["email"] == "dup.test@example.test"
+    # keeping your own email while changing your name still works
+    at.text_input(key=f"pem{other['id']}").set_value("dup.test@example.test")
+    at.text_input(key=f"pnm{other['id']}").set_value("Dup Renamed")
+    [b for b in at.button if b.key == f"peb{other['id']}"][0].click().run()
+    assert storage.user_by_id(other["id"])["name"] == "Dup Renamed"
+    assert storage.user_by_email("  dup.test@EXAMPLE.test ")["id"] == other["id"] and storage.user_by_email("") is None
