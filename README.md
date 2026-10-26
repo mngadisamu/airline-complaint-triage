@@ -18,7 +18,7 @@ Tower serves several airlines from one app. There are four roles:
 
 | Role | Who | Where they sign in | What they do |
 | --- | --- | --- | --- |
-| **Platform admin** | Whoever runs Tower (the person to contact for technical issues) | The bare web address | Adds airlines and each airline's first administrator, deactivates airlines and users, sees all users, the platform log and a System page |
+| **Platform admin** | Whoever runs Tower (the person to contact for technical issues) | The bare web address | Adds airlines and each airline's first administrator, edits airline names and anyone's name and email, deactivates airlines and users, sees all users, the platform log and a System page |
 | **Airline admin** | One or more people at each airline | Their airline's link | Dashboard (complaints by month, reasons, resolved, users), adds and deactivates staff by role, activity log |
 | **Team lead** | Senior support staff | Their airline's link | Queue, escalated complaints, Insights, activity log |
 | **Support agent** | Support staff | Their airline's link | Queue, draft replies, escalate |

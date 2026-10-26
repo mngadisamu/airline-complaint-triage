@@ -3,7 +3,7 @@
 ## The four roles
 | Role | Can | Cannot |
 |---|---|---|
-| Platform admin | Add and deactivate airlines, add airline admins, deactivate and reset any user, read the platform log, see the System page | Open any airline's complaint queue or customer replies |
+| Platform admin | Add, rename and deactivate airlines, add airline admins, edit any person's name and email, deactivate and reset any user, read the platform log, see the System page | Open any airline's complaint queue or customer replies |
 | Airline admin | Dashboard, add/deactivate/reset staff of their airline, activity log | Work the queue, or see another airline |
 | Team lead | Queue, decide escalations, Insights, activity log | Manage staff |
 | Support agent | Queue, draft, approve, escalate | See Insights, logs or staff |
